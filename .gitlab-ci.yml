@@ -1,0 +1,16 @@
+# Define o estágio de teste
+test:
+  stage: test
+  script:
+    - python -m pip install -r requirements.txt  # Instala as dependências
+    - python -m pytest  # Executa os testes automatizados
+  after_script:
+    - echo "Testes finalizados"
+
+# Configura notificações
+notifications:
+  email:
+    recipients:
+      - moura.camilaluiza@gmail.com
+    on_success: always  # Notificar sempre que os testes passarem
+    on_failure: always  # Notificar sempre que os testes falharem
