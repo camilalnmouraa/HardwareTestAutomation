@@ -1,16 +1,24 @@
-# Define o estágio de teste
+stages:
+  - test
+
+# Definição dos jobs do pipeline
 test:
   stage: test
+  image: python:3.11
   script:
-    - python -m pip install -r requirements.txt  # Instala as dependências
-    - python -m pytest  # Executa os testes automatizados
-  after_script:
-    - echo "Testes finalizados"
+    - pip install -r requirements.txt
+    - python -m pytest
+  artifacts:
+    paths:
+      - test_results/
+  tags:
+    - hardware-testing
 
-# Configura notificações
-notifications:
-  email:
-    recipients:
-      - moura.camilaluiza@gmail.com
-    on_success: always  # Notificar sempre que os testes passarem
-    on_failure: always  # Notificar sempre que os testes falharem
+# Definição da notificação em caso de falha
+notify_failure:
+  stage: test
+  script:
+    - echo "Pipeline falhou!"  # Mensagem de alerta
+    # Comando para enviar notificação para o Slack
+    - 'curl -X POST -H "Content-type: application/json" --data "{\"text\":\"Pipeline falhou!\"}" https://hooks.slack.com/services/XXXXXXXXX/YYYYYYYYY/ZZZZZZZZZZZZZZZZZZZZZZZZ'
+  when: on_failure  # Executa apenas em caso de falha
